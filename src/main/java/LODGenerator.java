@@ -1,63 +1,70 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class LODGenerator {
 
-    Map<P3, Corner> associative = new HashMap<>();
+    private final static int VERTEX_SIZE = 9; // position + normals + color!
+    private final static int TRIANGLE_SIZE = (VERTEX_SIZE * 3);
 
     public LODGenerator(
             float[] data
     ) {
-        int vertexSize = 9; // position + normals + color!
-        int triangleSize = (vertexSize * 3);
 
-        if ( data.length % triangleSize != 0 )
+        if ( data.length % TRIANGLE_SIZE != 0 )
             throw new IllegalArgumentException(
                 "The provided data is not divisible by the expected triangle size!"
             );
 
-        int numberOfTriangles = ( data.length / triangleSize );
+        int numberOfTriangles = ( data.length / TRIANGLE_SIZE);
+
+        Map<P3, Corner> associative = new HashMap<>();
+        Set<Edge> edges = new HashSet<>();
 
         IntStream
             .range( 0, numberOfTriangles )
             .forEach( i -> {
                 int ti = i * 18;
-                Vertex a = new Vertex(data, ti + 0 * vertexSize);
-                Vertex b = new Vertex(data, ti + 1 * vertexSize);
-                Vertex c = new Vertex(data, ti + 2 * vertexSize);
-                Corner v1 = registered( data, ti + 0 * vertexSize );
-                Corner v2 = registered( data, ti + 1 * vertexSize );
-                Corner v3 = registered( data, ti + 2 * vertexSize );
-                v1.addTriangle( new Triangle( a, b, c ) );
-                v2.addTriangle( new Triangle( b, a, c ) );
-                v3.addTriangle( new Triangle( c, a, b ) );
+                Corner v1 = registered( data, ti + 0 * VERTEX_SIZE, associative );
+                Corner v2 = registered( data, ti + 1 * VERTEX_SIZE, associative );
+                Corner v3 = registered( data, ti + 2 * VERTEX_SIZE, associative );
+                v1.addNeighbour( v2, v3 );
+                v2.addNeighbour( v1, v3 );
+                v3.addNeighbour( v1, v2 );
+                edges.add(new Edge( v2, v3 ));
+                edges.add(new Edge( v1, v3 ));
+                edges.add(new Edge( v1, v2 ));
             });
+
+        double cull = 0.3;
+        int[] i = {0};
+        int limit = (int) (edges.size() * cull);
+
+        edges.stream()
+                .parallel()
+                .sorted( (a, b) -> (a.cost() > b.cost() ? 1 : 0) )
+                .sequential()
+                .forEach( e -> {
+                    if ( i[0] < limit && !e.willBeCollapsed() ) {
+                        e.flagAsCollapsable();
+                        i[0]++;
+                    }
+                } );
+
+
+
     }
 
-    private Corner registered(float[] data, int ti ) {
+    private static Corner registered(
+            float[] data, int ti, Map<P3, Corner> associative
+    ) {
         Corner v = associative.get( new P3(data, ti) );
         if ( v == null ) {
-            v = new Corner();
+            v = new Corner(new Vertex(data, ti));
             associative.put( new P3(data, ti), v );
         }
         return v;
     }
 
-    public Corner.Cost[] cost() {
-        Corner[] vertecies = associative.values().toArray(Corner[]::new);
-        Corner.Cost[] costs = cost(vertecies);
-        return costs;
-    }
-
-    private Corner.Cost[] cost(Corner[] vertecies) {
-        return
-            IntStream
-                .range(0,vertecies.length)
-                .parallel()
-                .mapToObj( i -> new Corner.Cost(vertecies[i], i) )
-                .sorted( (a, b) -> (a.cost() > b.cost() ? 1 : 0) )
-                .toArray(Corner.Cost[]::new);
-    }
 
 }

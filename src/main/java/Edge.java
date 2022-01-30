@@ -2,20 +2,31 @@ import java.util.Objects;
 
 public class Edge {
 
-    private final Corner.Cost first;
-    private final Corner.Cost second;
+    private final Corner first;
+    private final Corner second;
 
-    public Edge(Corner.Cost first, Corner.Cost second) {
+    public Edge( Corner first, Corner second ) {
         this.first = first;
         this.second = second;
     }
 
-    public void collapse() {
+    public double cost() {
+        return (this.first.getCost() + this.second.getCost())/2;
+    }
 
+    public void flagAsCollapsable() {
+        if ( first.notFlaggedAsCollapsed() && second.notFlaggedAsCollapsed()) {
+            first.flagAsCollapsable();
+            second.flagAsCollapsable();
+        }
+    }
+
+    public boolean willBeCollapsed() {
+        return !first.notFlaggedAsCollapsed() && !second.notFlaggedAsCollapsed()
     }
 
     public int hashCode() {
-        return first.vertex().hashCode() + second.vertex().hashCode();
+        return first.getVertex().getPoint().hashCode() + second.getVertex().getPoint().hashCode();
     }
 
     @Override
@@ -23,8 +34,8 @@ public class Edge {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Edge edge = (Edge) o;
-        return Objects.equals(first, edge.first) && Objects.equals(second, edge.second)
+        return Objects.equals(first.getVertex().getPoint(), edge.first.getVertex().getPoint()) && Objects.equals(second.getVertex().getPoint(), edge.second.getVertex().getPoint())
                 ||
-               Objects.equals(first, edge.second) && Objects.equals(second, edge.first);
+               Objects.equals(first.getVertex().getPoint(), edge.second.getVertex().getPoint()) && Objects.equals(second.getVertex().getPoint(), edge.first.getVertex().getPoint());
     }
 }

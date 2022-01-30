@@ -12,6 +12,10 @@ public class Vertex {
         this.position = position;
     }
 
+    public P3 getPoint() {
+        return new P3( data, position );
+    }
+
     public float x()  { return this.data[position+0]; }
     public float y()  { return this.data[position+1]; }
     public float z()  { return this.data[position+2]; }
@@ -22,21 +26,6 @@ public class Vertex {
     public float g()  { return this.data[position+7]; }
     public float b()  { return this.data[position+8]; }
 
-    private float cost( Vertex other ) {
-        return (float)
-                Math.sqrt(
-                        (Math.pow(x()-other.x(),  2) +
-                                Math.pow(y()-other.y(),  2) +
-                                Math.pow(z()-other.z(),  2) +
-                                Math.pow(nx()-other.nx(),2) +
-                                Math.pow(ny()-other.ny(),2) +
-                                Math.pow(nz()-other.nz(),2) +
-                                Math.pow(r()-other.r(),  2) +
-                                Math.pow(g()-other.g(),  2) +
-                                Math.pow(b()-other.b(),  2)) / 9
-                );
-    }
-
     @Override
     public boolean equals(Object o) {
         if ( this == o ) return true;
@@ -44,14 +33,14 @@ public class Vertex {
         Vertex vertex = (Vertex) o;
         return
                 Double.compare(vertex.x(), x()) == 0 &&
-                        Double.compare(vertex.y(), y()) == 0 &&
-                        Double.compare(vertex.z(), z()) == 0 &&
-                        Double.compare(vertex.nx(), nx()) == 0 &&
-                        Double.compare(vertex.ny(), ny()) == 0 &&
-                        Double.compare(vertex.nz(), nz()) == 0 &&
-                        Double.compare(vertex.r(), r()) == 0 &&
-                        Double.compare(vertex.g(), g()) == 0 &&
-                        Double.compare(vertex.b(), b()) == 0;
+                Double.compare(vertex.y(), y()) == 0 &&
+                Double.compare(vertex.z(), z()) == 0 &&
+                Double.compare(vertex.nx(), nx()) == 0 &&
+                Double.compare(vertex.ny(), ny()) == 0 &&
+                Double.compare(vertex.nz(), nz()) == 0 &&
+                Double.compare(vertex.r(), r()) == 0 &&
+                Double.compare(vertex.g(), g()) == 0 &&
+                Double.compare(vertex.b(), b()) == 0;
     }
 
     @Override
