@@ -6,7 +6,7 @@ public class Vertex {
     private final int position;
 
     Vertex(
-            float[] data, int position
+        float[] data, int position
     ) {
         this.data = data;
         this.position = position;
@@ -14,6 +14,22 @@ public class Vertex {
 
     public P3 getPoint() {
         return new P3( data, position );
+    }
+
+    public void set(
+            float x, float y, float z,
+            float nx, float ny, float nz,
+            float r, float g, float b
+    ) {
+        this.data[position+0] = x;
+        this.data[position+1] = y;
+        this.data[position+2] = z;
+        this.data[position+3] = nx;
+        this.data[position+4] = ny;
+        this.data[position+5] = nz;
+        this.data[position+6] = r;
+        this.data[position+7] = g;
+        this.data[position+8] = b;
     }
 
     public float x()  { return this.data[position+0]; }

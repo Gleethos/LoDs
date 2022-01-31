@@ -4,23 +4,36 @@ import java.util.stream.Collectors;
 
 public class Corner {
 
-    private final Vertex vertex;
+    private final P3 point;
     private final List<Corner> neighbours = new ArrayList<>();
+    private final List<Triangle> triangles = new ArrayList<>();
 
     private double cost = Double.NaN;
     private boolean toBeCollapsed = false;
 
-    public Corner( Vertex vertex ) { this.vertex = vertex; }
+    public Corner( P3 point ) { this.point = point; }
 
     public void addNeighbour( Corner... corners ) {
         this.neighbours.addAll(Arrays.asList(corners));
     }
 
-    public List<Edge> getEdges() {
-        return this.neighbours
-                    .stream()
-                    .map( n -> new Edge( this, n ) )
-                    .collect(Collectors.toList());
+    public void addTriangle( Triangle v ) {
+        this.triangles.add( v );
+    }
+
+    public List<Vertex> getVertices() {
+        return this.getTriangles()
+                .stream()
+                .map( triangle -> triangle.main() )
+                .collect(Collectors.toList());
+    }
+
+    public int numberOfNeighbours() {
+        return this.neighbours.size();
+    }
+
+    public List<Triangle> getTriangles() {
+        return triangles;
     }
 
     public boolean notFlaggedAsCollapsed() { return !this.toBeCollapsed; }
@@ -37,7 +50,7 @@ public class Corner {
     private double _localCost( Function<Vertex, V3> selector )
     {
         List<V3> normals = neighbours.stream()
-                                    .map( n -> n.vertex)
+                                    .map( n -> n.getVertices().get(0) )
                                     .map( selector )
                                     .collect(Collectors.toList());
 
@@ -60,13 +73,13 @@ public class Corner {
         return this.cost;
     }
 
-    public Vertex getVertex() {
-        return vertex;
+    public P3 getPoint() {
+        return this.point;
     }
 
 
     public int hashCode() {
-        Vertex p = this.vertex;
+        P3 p = this.point;
         return Objects.hash( p.x(), p.y(), p.z(), p.nx(), p.ny(), p.nz() );
     }
 
@@ -75,8 +88,8 @@ public class Corner {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Corner corner = (Corner) o;
-        Vertex a = corner.vertex;
-        Vertex b = this.vertex;
+        P3 a = corner.point;
+        P3 b = this.point;
         return new V3(a.x(), a.y(), a.z()).equals(new V3(b.x(), b.y(), b.z())) &&
                new V3(a.nx(), a.ny(), a.nz()).equals(new V3(b.nx(), b.ny(), b.nz()));
     }
