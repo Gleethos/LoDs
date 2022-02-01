@@ -14,6 +14,9 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class LoadModelsTest implements ApplicationListener
 {
     public PerspectiveCamera cam;
