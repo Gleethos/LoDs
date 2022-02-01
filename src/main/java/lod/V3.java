@@ -1,3 +1,5 @@
+package lod;
+
 public class V3 {
 
     private final float vx, vy, vz;

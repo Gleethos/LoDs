@@ -1,10 +1,12 @@
+package lod;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class LODGenerator {
 
-    private final static int VERTEX_SIZE = 9; // position + normals + color!
+    private final static int VERTEX_SIZE = 12; // position + normals + color!
     private final static int TRIANGLE_SIZE = (VERTEX_SIZE * 3);
     private final float[] result;
 
@@ -92,6 +94,9 @@ public class LODGenerator {
                     result[di + 6] = v.r();
                     result[di + 7] = v.g();
                     result[di + 8] = v.b();
+                    for ( int ii = 9; ii < VERTEX_SIZE; ii++ ) {
+                        result[di + ii] = sourceData[ v.getPointer() + ii ];
+                    }
                 });
     }
 

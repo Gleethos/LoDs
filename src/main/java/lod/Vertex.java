@@ -1,3 +1,5 @@
+package lod;
+
 import java.util.Objects;
 
 public class Vertex {
@@ -14,6 +16,10 @@ public class Vertex {
 
     public P3 getPoint() {
         return new P3( data, position );
+    }
+
+    public int getPointer() {
+        return position;
     }
 
     public void set(

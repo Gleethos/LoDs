@@ -1,3 +1,5 @@
+package lod;
+
 public class Triangle {
 
     private final Vertex main, second, third;
