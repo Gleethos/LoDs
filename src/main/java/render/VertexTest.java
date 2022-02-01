@@ -14,7 +14,6 @@ public class VertexTest implements ApplicationListener {
 
 	private ShaderProgram shaderProgram;
 	private Mesh mesh;
-	private Random rnd = new Random(0);
 
 	@Override
 	public void create() {
@@ -47,13 +46,13 @@ public class VertexTest implements ApplicationListener {
 		int numberOfVertices = 4 * numberOfRectangles;
 		mesh = new Mesh(true, numberOfVertices, numberOfRectangles * 6, VertexAttribute.Position(), VertexAttribute.ColorUnpacked());
 
-		int vertexPositionValue = 3;
-		int vertexColorValue = 4;
+		int VERTEX_POSITION_SIZE = 3;
+		int VERTEX_COLOR_SIZE = 4;
 
-		int valuesPerVertex = vertexPositionValue + vertexColorValue;
+		int VERTEX_SIZE = VERTEX_POSITION_SIZE + VERTEX_COLOR_SIZE;
 
 		short[] vertexIndices = new short[numberOfRectangles * 6];
-		float[] verticesWithColor = new float[numberOfVertices * valuesPerVertex];
+		float[] verticesWithColor = new float[numberOfVertices * VERTEX_SIZE];
 
 		for (int i = 0; i < numberOfRectangles; i++) {
 			float colorR = generateNumberBetweenZeroAndOne(rnd);
@@ -63,12 +62,13 @@ public class VertexTest implements ApplicationListener {
 			float x = generateNumberBetweenNegativeOneAndPointNine(rnd);
 			float y = generateNumberBetweenNegativeOneAndPointNine(rnd);
 
-			int rectangleOffsetInArray = i * valuesPerVertex * 4;
+			int rectangleOffsetInArray = i * VERTEX_SIZE * 4;
 
-			setValuesInArrayForVertex(verticesWithColor, colorR, colorG, colorB, x, y, rectangleOffsetInArray, 0);
-			setValuesInArrayForVertex(verticesWithColor, colorR*0.7f, colorG, colorB, x + 0.1f, y, rectangleOffsetInArray, 1);
-			setValuesInArrayForVertex(verticesWithColor, colorR, colorG, colorB*0.1f, x + 0.1f, y + 0.1f, rectangleOffsetInArray, 2);
-			setValuesInArrayForVertex(verticesWithColor, colorR*0.5f, colorG, colorB, x, y + 0.1f, rectangleOffsetInArray, 3);
+			float alpha = 0.2f;
+			setValuesInArrayForVertex(verticesWithColor, colorR, colorG, colorB, alpha, x, y, rectangleOffsetInArray, 0);
+			setValuesInArrayForVertex(verticesWithColor, colorR*0.7f, colorG, colorB, alpha, x + 0.1f, y, rectangleOffsetInArray, 1);
+			setValuesInArrayForVertex(verticesWithColor, colorR, colorG, colorB*0.1f, alpha, x + 0.1f, y + 0.1f, rectangleOffsetInArray, 2);
+			setValuesInArrayForVertex(verticesWithColor, colorR*0.5f, colorG, colorB, alpha, x, y + 0.1f, rectangleOffsetInArray, 3);
 
 			vertexIndices[i * 6 + 0] = (short) (i * 4 + 0);
 			vertexIndices[i * 6 + 1] = (short) (i * 4 + 1);
@@ -83,7 +83,7 @@ public class VertexTest implements ApplicationListener {
 
 	private void setValuesInArrayForVertex(
 			float[] verticesWithColor,
-			float colorR, float colorG, float colorB,
+			float colorR, float colorG, float colorB, float alpha,
 			float x, float y,
 			int rectangleOffsetInArray,
 			int vertexNumberInRect
@@ -102,8 +102,10 @@ public class VertexTest implements ApplicationListener {
 		// blue value
 		verticesWithColor[vertexOffsetInArray + 5] = colorB;
 		// alpha value
-		verticesWithColor[vertexOffsetInArray + 6] = 0.2f;
+		verticesWithColor[vertexOffsetInArray + 6] = alpha;
 	}
+
+	private Random rnd = new Random(0);
 
 	private float generateNumberBetweenNegativeOneAndPointNine(Random rnd) {
 		return rnd.nextFloat() * 1.9f - 1f;
