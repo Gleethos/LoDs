@@ -28,10 +28,6 @@ public class Corner {
                 .collect(Collectors.toList());
     }
 
-    public int numberOfNeighbours() {
-        return this.neighbours.size();
-    }
-
     public List<Triangle> getTriangles() {
         return triangles;
     }

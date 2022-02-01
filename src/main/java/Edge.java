@@ -1,54 +1,13 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Edge {
 
     private final Corner first;
     private final Corner second;
-    private Runnable collaps = ()->{};
 
     public Edge( Corner first, Corner second ) {
         this.first = first;
         this.second = second;
-    }
-
-    public List<Triangle> getTriangles() {
-        List<Triangle> triangles = first.getTriangles();
-        triangles.addAll( second.getTriangles() );
-        if ( this.willBeCollapsed() ) {
-            List<Triangle> removable =
-                            triangles.stream()
-                                    .filter( t ->
-                                            getFirst().equals(t.main()) && getFirst().equals(t.second())
-                                            ||
-                                            getFirst().equals(t.main()) && getFirst().equals(t.third())
-                                            ||
-                                            getFirst().equals(t.second()) && getFirst().equals(t.main())
-                                            ||
-                                            getFirst().equals(t.second()) && getFirst().equals(t.third())
-                                            ||
-                                            getFirst().equals(t.third()) && getFirst().equals(t.main())
-                                            ||
-                                            getFirst().equals(t.third()) && getFirst().equals(t.second())
-                                    )
-                                    .collect(Collectors.toList());
-            // TODO: Create modifies triangles!
-            triangles.removeAll(removable);
-        }
-
-        return triangles;
-    }
-
-    //TODO: Create method that modifies vertex data!
-
-    public P3 getFirst() {
-        return first.getPoint();
-    }
-
-    public P3 getSecond() {
-        return second.getPoint();
     }
 
     public double cost() {
@@ -88,14 +47,6 @@ public class Edge {
                 nx, ny, nz,
                 r, g, b
         );
-    }
-
-    public int sizeNeeded() {
-        if ( this.willBeCollapsed() ) {
-            return first.numberOfNeighbours() + second.numberOfNeighbours() - 2;
-        }
-        else
-            return first.numberOfNeighbours() + second.numberOfNeighbours();
     }
 
     public int hashCode() {
