@@ -8,8 +8,8 @@ import java.util.stream.IntStream;
 
 public class Internal {
 
-	private final static int VERTEX_SIZE   = 9; // position + normals + color!
-	private final static int TRIANGLE_SIZE = (VERTEX_SIZE * 3);
+	public final static int VERTEX_SIZE   = 9; // position + normals + color!
+	public final static int TRIANGLE_SIZE = (VERTEX_SIZE * 3);
 
 
 	public static float[] generate(
@@ -18,15 +18,15 @@ public class Internal {
 		if ( vertices == null )
 			throw new IllegalArgumentException("Vertex coordinates cannot be null!");
 
-		final int NUMBER_OF_TRIANGLES = (vertices.length / 3);
+		final int NUMBER_OF_TRIANGLES = (vertices.length / 9);
 
-		float[] data = new float[NUMBER_OF_TRIANGLES * VERTEX_SIZE];
+		float[] data = new float[NUMBER_OF_TRIANGLES * TRIANGLE_SIZE];
 
 		IntStream.range(0, NUMBER_OF_TRIANGLES)
 				.parallel()
 				.forEach( ti -> {
-					int vi = ti * 3;
-					int di = ti * VERTEX_SIZE;
+					int vi = ti * 9;
+					int di = ti * TRIANGLE_SIZE;
 					Vector3 n = normal(vertices, vi, normals, vi);
 					Vector3 c = color(colors, vi);
 					data[ di + 0 ] = vertices[vi + 0];
@@ -73,7 +73,7 @@ public class Internal {
 
 		int numberOfTriangles = ( data.length / TRIANGLE_SIZE);
 
-		Map<P3, Corner> associative = new HashMap<>();
+		Map<P3, Corner> associative = new LinkedHashMap<>();
 		Set<Edge> edges = new HashSet<>();
 
 		IntStream
@@ -113,7 +113,9 @@ public class Internal {
 					}
 				});
 
-		Set<Vertex> resultSet = new HashSet<>();
+		System.out.println("Collapsed edges: "+i[0]);
+
+		Set<Vertex> resultSet = new LinkedHashSet<>();
 		sortedList.stream().parallel().forEach( e -> {
 			if ( e.willBeCollapsed() ) e.collapse();
 		});

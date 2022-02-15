@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import lod.LODGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,7 @@ public class LoadModelsTest implements ApplicationListener
             vertices[i+11] *= 1f;
         }
 
-        //vertices = new LODGenerator(vertices, 0.3).getResult();
+        vertices = new LODGenerator(vertices, null, null, 1).getResultOnlyVertecies();
 
         mesh.setVertices(vertices);
     }
